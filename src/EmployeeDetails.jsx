@@ -3,19 +3,18 @@ import { useParams, Link } from 'react-router-dom';
 
 function EmployeeDetails() {
   const { name } = useParams();
-  const [employee, setEmployee] = useState(null); // Store the data we get from API
+  const [backendData, setBackendData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // This is the REAL API call
-    // We are fetching a random user (ID 1, 2, or 3) just to show it works
-    const randomId = Math.floor(Math.random() * 10) + 1;
-
-    fetch(`https://jsonplaceholder.typicode.com/users/${randomId}`)
+    // ---------------------------------------------------------
+    // IMPORTANT: REPLACE '5108' WITH YOUR MAGIC NUMBER FROM STEP 1
+    // ---------------------------------------------------------
+    fetch('http://localhost:5108/weatherforecast') 
       .then(response => response.json())
       .then(data => {
-        setEmployee(data); // Save the real data
-        setLoading(false); // Stop loading
+        setBackendData(data);
+        setLoading(false);
       })
       .catch(error => {
         console.error("Error fetching data:", error);
@@ -24,21 +23,20 @@ function EmployeeDetails() {
   }, []);
 
   if (loading) {
-    return <h2 style={{ padding: '40px', color: '#ffcc00' }}>⚠️ Connecting to External API...</h2>;
+    return <h2 style={{ padding: '40px', color: '#ffcc00' }}>⚠️ Connecting to .NET Backend...</h2>;
   }
 
   return (
     <div style={{ padding: '40px', border: '1px solid #ccc', margin: '20px', borderRadius: '10px', textAlign: 'left' }}>
-      <h1>👤 Employee Profile (Live Data)</h1>
+      <h1>🔗 Backend Connection Test</h1>
       <hr />
-      {/* We display the Name from the URL, but other details come from the API */}
-      <h2>Name: {name}</h2>
+      <h2>Employee: {name}</h2>
       
-      <h3>Real Data from API:</h3>
-      <p><strong>Email:</strong> {employee.email}</p>
-      <p><strong>Phone:</strong> {employee.phone}</p>
-      <p><strong>Website:</strong> {employee.website}</p>
-      <p><strong>Company:</strong> {employee.company.name}</p>
+      <h3>Data received from .NET API:</h3>
+      {/* This block dumps the raw data so we can verify the connection */}
+      <pre style={{ backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
+        {JSON.stringify(backendData, null, 2)}
+      </pre>
       
       <br />
       <Link to="/" style={{ color: '#646cff', fontWeight: 'bold' }}>← Back to Dashboard</Link>

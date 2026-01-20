@@ -1,68 +1,91 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  --glass-bg: rgba(255, 255, 255, 0.07);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-highlight: rgba(255, 255, 255, 0.3);
+  --primary-color: #d8b4fe; /* Light violet text */
+  --text-color: #ffffff;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-color);
   min-height: 100vh;
+  overflow-x: hidden;
+
+  /* VIBRANT NEBULA BACKGROUND */
+  background: linear-gradient(
+    300deg, 
+    #0f0c29, /* Deep Dark Blue */
+    #302b63, /* Deep Purple */
+    #24243e, /* Dark Slate */
+    #7c3aed, /* Bright Violet */
+    #db2777  /* Deep Pink */
+  );
+  background-size: 240% 240%;
+  animation: cosmic-drift 10s ease infinite;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+@keyframes cosmic-drift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+/* LIQUID GLASS CARD */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);         /* Stronger Blur */
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+/* GLASS HOVER EFFECT */
+.glass:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--glass-highlight);
+  box-shadow: 0 0 25px rgba(124, 58, 237, 0.5); /* Violet Glow */
+  transform: translateY(-5px);
+}
+
+/* LIQUID BUTTONS & INPUTS */
+.btn-glass {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  border-radius: 12px;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  display: inline-block;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
 }
+
+input, select {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--glass-border);
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+input:focus, select:focus {
+  outline: 2px solid #a855f7;
+  background: rgba(0, 0, 0, 0.5);
+}
+

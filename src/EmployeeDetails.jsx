@@ -1,45 +1,58 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
 function EmployeeDetails() {
   const { name } = useParams();
-  const [backendData, setBackendData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [employee, setEmployee] = useState(null);
 
+  // Helper to find the employee by name (since we don't have an ID in the URL here)
   useEffect(() => {
-    // ---------------------------------------------------------
-    // IMPORTANT: REPLACE '5108' WITH YOUR MAGIC NUMBER FROM STEP 1
-    // ---------------------------------------------------------
-    fetch('http://localhost:5108/weatherforecast') 
-      .then(response => response.json())
+    fetch('http://localhost:5108/api/employees')
+      .then(res => res.json())
       .then(data => {
-        setBackendData(data);
-        setLoading(false);
+        const found = data.find(e => e.name === name);
+        setEmployee(found);
       })
-      .catch(error => {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      });
-  }, []);
+      .catch(err => console.error(err));
+  }, [name]);
 
-  if (loading) {
-    return <h2 style={{ padding: '40px', color: '#ffcc00' }}>⚠️ Connecting to .NET Backend...</h2>;
-  }
+  if (!employee) return <div style={{ color: 'white', textAlign: 'center', marginTop: '50px' }}>Loading...</div>;
 
   return (
-    <div style={{ padding: '40px', border: '1px solid #ccc', margin: '20px', borderRadius: '10px', textAlign: 'left' }}>
-      <h1>🔗 Backend Connection Test</h1>
-      <hr />
-      <h2>Employee: {name}</h2>
-      
-      <h3>Data received from .NET API:</h3>
-      {/* This block dumps the raw data so we can verify the connection */}
-      <pre style={{ backgroundColor: '#222', padding: '10px', borderRadius: '5px' }}>
-        {JSON.stringify(backendData, null, 2)}
-      </pre>
-      
-      <br />
-      <Link to="/" style={{ color: '#646cff', fontWeight: 'bold' }}>← Back to Dashboard</Link>
+    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
+      <div className="glass" style={{ width: '500px', padding: '40px', textAlign: 'left' }}>
+        
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: '20px' }}>
+          <div style={{ fontSize: '3rem', marginRight: '20px' }}>👤</div>
+          <div>
+            <h2 style={{ margin: 0 }}>Employee Profile</h2>
+            <span style={{ color: '#ccc', fontSize: '0.9rem' }}>SQL Database Record</span>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', fontSize: '1.1rem' }}>
+          <div>
+            <strong style={{ color: '#a855f7' }}>Name:</strong> {employee.name}
+          </div>
+          <div>
+            <strong style={{ color: '#a855f7' }}>Role:</strong> {employee.role}
+          </div>
+          <div>
+            <strong style={{ color: '#a855f7' }}>Status:</strong> {employee.status}
+          </div>
+          <div>
+            <strong style={{ color: '#a855f7' }}>ID:</strong> {employee.id}
+          </div>
+        </div>
+
+        {/* FIX: Link points to /dashboard, NOT / */}
+        <div style={{ marginTop: '30px' }}>
+          <Link to="/dashboard" className="btn-glass" style={{ textAlign: 'center', display: 'block' }}>
+            ← Back to Dashboard
+          </Link>
+        </div>
+
+      </div>
     </div>
   );
 }

@@ -1,41 +1,76 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-// Import our components
-import EmployeeCard from './EmployeeCard';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './Navbar';
-import About from './About';
+import TeamDashboard from './TeamDashboard';
+import AddEmployee from './AddEmployee';
+import EditEmployee from './EditEmployee';
 import EmployeeDetails from './EmployeeDetails';
+import Login from './Login';
 
-// Simple Home Page Component
-function TeamPage() {
+// GUARD: Only lets you pass if a token exists
+function PrivateRoute({ children }) {
+  const token = localStorage.getItem('token');
+  // If no token, kick them back to "/" (Login)
+  return token ? children : <Navigate to="/" />;
+}
+
+// LAYOUT: Wraps pages that need the Navbar
+function Layout({ children }) {
   return (
-    <div style={{ padding: '40px' }}>
-      <h1>AddSolTech Team</h1>
-      <EmployeeCard name="Sarah Smith" role="Frontend Developer" />
-      <EmployeeCard name="Mike Ross" role="Backend Lead" />
-    </div>
+    <>
+      <Navbar />
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+        {children}
+      </div>
+    </>
   );
 }
 
 function App() {
   return (
-    <BrowserRouter>
-      {/* Navbar stays visible on all pages */}
-      <Navbar />
-      
+    <Router>
       <Routes>
-        {/* Main Dashboard */}
-        <Route path="/" element={<TeamPage />} />
+        {/* 1. Public Route: Login */}
+        <Route path="/" element={<Login />} />
+
+        {/* 2. Protected Routes (Wrapped in Layout + PrivateRoute) */}
         
-        {/* Dynamic Route for Employee Details */}
-        <Route path="/employee/:name" element={<EmployeeDetails />} />
-        
-        {/* About Page */}
-        <Route path="/about" element={<About />} />
+        <Route path="/dashboard" element={
+          <PrivateRoute>
+            <Layout>
+              <TeamDashboard />
+            </Layout>
+          </PrivateRoute>
+        } />
+
+        <Route path="/add" element={
+          <PrivateRoute>
+            <Layout>
+              <AddEmployee />
+            </Layout>
+          </PrivateRoute>
+        } />
+
+        <Route path="/employee/:name" element={
+          <PrivateRoute>
+            <Layout>
+              <EmployeeDetails />
+            </Layout>
+          </PrivateRoute>
+        } />
+
+        <Route path="/edit/:id" element={
+          <PrivateRoute>
+            <Layout>
+              <EditEmployee />
+            </Layout>
+          </PrivateRoute>
+        } />
+
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 
 export default App;
+

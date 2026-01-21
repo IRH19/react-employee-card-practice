@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import EmployeeCard from './EmployeeCard';
+import CommandBar from './CommandBar';
 
 function TeamDashboard() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // 1. ADVANCED STATE: Managing filters
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
 
   useEffect(() => {
     fetchEmployees();
@@ -11,36 +16,84 @@ function TeamDashboard() {
 
   const fetchEmployees = () => {
     fetch('http://localhost:5108/api/employees')
-      .then(response => response.json())
+      .then(res => res.json())
       .then(data => {
         setEmployees(data);
         setLoading(false);
       })
-      .catch(error => console.error("Error:", error));
+      .catch(err => console.error(err));
   };
 
-  // This function removes the deleted person from the screen immediately
-  const handleEmployeeDeleted = (deletedId) => {
-    setEmployees(employees.filter(emp => emp.id !== deletedId));
+  const handleDelete = (id) => {
+    setEmployees(employees.filter(emp => emp.id !== id));
   };
 
-  if (loading) return <h2 style={{ padding: '20px', color: '#ffcc00' }}>⚠️ Loading Team...</h2>;
+  // 2. THE LOGIC ENGINE (useMemo)
+  // This only runs when 'searchTerm', 'statusFilter', or 'employees' changes.
+  // It's much more efficient than filtering inside the return().
+  const filteredEmployees = useMemo(() => {
+    return employees.filter(emp => {
+      // Filter 1: Name match (Case insensitive)
+      const matchesSearch = emp.name.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // Filter 2: Status match
+      const matchesStatus = statusFilter === 'All' || emp.status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [employees, searchTerm, statusFilter]);
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Team Dashboard</h1>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        {employees.map(employee => (
-          <EmployeeCard 
-            key={employee.id} 
-            id={employee.id} // We pass the ID now so we can edit/delete
-            name={employee.name} 
-            role={employee.role} 
-            status={employee.status}
-            onDelete={handleEmployeeDeleted} // Pass the delete function down
-          />
-        ))}
-      </div>
+    <div>
+      <h1 style={{ 
+        textAlign: 'center', 
+        marginBottom: '20px', 
+        fontSize: '2.5rem', 
+        textShadow: '0 0 20px rgba(168, 85, 247, 0.5)' 
+      }}>
+        Team Overview
+      </h1>
+
+      {/* 3. The New Control Panel */}
+      <CommandBar 
+        searchTerm={searchTerm} 
+        setSearchTerm={setSearchTerm} 
+        statusFilter={statusFilter} 
+        setStatusFilter={setStatusFilter}
+        count={filteredEmployees.length}
+        total={employees.length}
+      />
+
+      {loading ? (
+        <div style={{ textAlign: 'center', color: '#ccc' }}>Connecting to SQL Server...</div>
+      ) : (
+        <div style={{ 
+          display: 'flex', 
+          flexWrap: 'wrap', 
+          gap: '30px', 
+          justifyContent: 'center' 
+        }}>
+          {/* 4. Display Logic: Show list OR Empty State */}
+          {filteredEmployees.length > 0 ? (
+            filteredEmployees.map(emp => (
+              <EmployeeCard 
+                key={emp.id}
+                id={emp.id}
+                name={emp.name}
+                role={emp.role}
+                status={emp.status}
+                onDelete={handleDelete}
+              />
+            ))
+          ) : (
+            // The "Advanced" Empty State (UX Best Practice)
+            <div className="glass" style={{ padding: '40px', textAlign: 'center', opacity: 0.7 }}>
+              <h3>🔍 No employees found</h3>
+              <p>Try adjusting your filters.</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

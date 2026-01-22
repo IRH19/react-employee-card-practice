@@ -1,58 +1,104 @@
 :root {
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --primary-color: #a855f7; /* Violet */
+  --glass-bg: rgba(255, 255, 255, 0.07);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-highlight: rgba(255, 255, 255, 0.3);
+  --primary-color: #d8b4fe; /* Light violet text */
   --text-color: #ffffff;
 }
 
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  /* Deep dark background with indigo/violet gradients */
-  background: radial-gradient(circle at 10% 20%, rgb(69, 29, 112) 0%, rgb(28, 12, 56) 90%);
   color: var(--text-color);
   min-height: 100vh;
+  overflow-x: hidden;
+
+  /* VIBRANT NEBULA BACKGROUND */
+  background: linear-gradient(
+    300deg, 
+    #0f0c29, /* Deep Dark Blue */
+    #302b63, /* Deep Purple */
+    #24243e, /* Dark Slate */
+    #7c3aed, /* Bright Violet */
+    #db2777  /* Deep Pink */
+  );
+  background-size: 240% 240%;
+  animation: cosmic-drift 10s ease infinite;
 }
 
-/* THE MAGIC GLASS CLASS */
+@keyframes cosmic-drift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* LIQUID GLASS CARD */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px); /* Safari support */
+  backdrop-filter: blur(20px);         /* Stronger Blur */
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  border-radius: 15px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  color: white;
+  transition: all 0.3s ease;
 }
 
-/* Inputs */
-input, select {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
-  border-radius: 8px;
-  width: 100%;
-  box-sizing: border-box; /* Fixes padding issues */
+/* GLASS HOVER EFFECT */
+.glass:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--glass-highlight);
+  box-shadow: 0 0 25px rgba(124, 58, 237, 0.5); /* Violet Glow */
+  transform: translateY(-5px);
 }
+
+/* LIQUID BUTTONS & INPUTS */
+.btn-glass {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  border-radius: 12px;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  cursor: pointer;
+  display: inline-block;
+}
+
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+input, select {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--glass-border);
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
 input:focus, select:focus {
-  outline: 2px solid var(--primary-color);
+  outline: 2px solid #a855f7;
   background: rgba(0, 0, 0, 0.5);
 }
 
-/* Animations */
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+/* SKELETON SHIMMER ANIMATION */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}
-
-button {
-  transition: all 0.3s ease;
-}
-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px var(--primary-color);
+.skeleton {
+  background: #334155; /* Dark Grey Base */
+  background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
 }
